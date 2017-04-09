@@ -19,7 +19,7 @@
  * time interval (in microseconds).
  */
 #define CHARGE_DELAY		50
-#define ISO					80
+#define ISO					200
 /* Next, we're setting how long the led will be turned on after it
  * sensed light. This value is in miliseconds.
  */
