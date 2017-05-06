@@ -8,8 +8,14 @@ function retval = current_voltage (D)
     if D(c, 1) <= D(c-1, 1)
       continue;
     endif
+    % the voltage is read directly from ADC
     voltage = D(c, 2);
-    current = (D(c-1, 2) - D(c, 2)) / (D(c, 1) - D(c-1, 1)) ;
+    % the current is estimated from I = dQ/dt = d(CU)/dt = CdU/dt
+    current = (D(c-1, 2) - D(c, 2)) / (D(c, 1) - D(c-1, 1)); 
+    
+    %voltage = (5/1024) * voltage;  % V
+    %current = (5/10240) * current; % mA, 100nF capacitor, time is in ms
+    
     retval = [ retval ; [ current, voltage ] ];
   endfor
 endfunction
