@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Robot</title>
+  </head>
+  <body>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://rawgit.com/ngryman/jquery.finger/v0.1.2/dist/jquery.finger.js"></script>
+        <script>
+        var motor = {
+            u:'/rpc/',
+            a:128,
+            b:128,
+            busy:0,
+            body:$('body'),
+            move:function(){
+            if(this.busy)return;
+            this.body.css({'backgroundColor':'blue'});
+            this.busy=1;
+            $.ajax({
+                type:'POST',
+                url:this.u,
+                data:{'motor_a':this.a,'motor_b':this.b},
+                context:this,
+                success:function(r){
+                    this.body.css({'backgroundColor':'transparent'});
+                    this.busy=0;
+                },
+                error:function(){
+                    this.body.css({'backgroundColor':'transparent'});
+                    this.busy=0;
+                }
+            });
+            },
+            stop:function(){this.a=this.b=128;this.move()}
+        };
+        var w=$(window);
+        w.on('drag',motor,function(ev){
+            var x=2*ev.dx/w.width(),y=-2*ev.dy/w.height(),
+            t=Math.atan2(y,x),
+            a=Math.sign(y)*Math.sqrt(x*x+y*y)*(1-Math.cos(t)),
+            b=Math.sign(y)*Math.sqrt(x*x+y*y)*(1+Math.cos(t));
+            motor.a=Math.floor(128+127*(a>1?1:(a<-1?-1:a)));
+            motor.b=Math.floor(128+127*(b>1?1:(b<-1?-1:b)));
+            motor.move();
+        });
+        w.on('doubletap',motor,function(ev){ev.data.stop()});
+        </script>
+  </body>
+</html>
